@@ -1,7 +1,12 @@
 import React from 'react';
-import { Package, FileText, FlaskConical, Link as LinkIcon, AlertCircle, Plus, X } from 'lucide-react';
-import ImageUploader from "@/shared/components/upload/ImageUploader";
-import { FormData } from "@/features/products/hooks/useProductForm"; // Import interface
+import { Package, AlertCircle } from 'lucide-react';
+import { FormData } from "@/features/products/hooks/useProductForm";
+
+import { BasicInfoSection } from "./form-sections/BasicInfoSection";
+import { ProductDetailSection } from "./form-sections/ProductDetailSection";
+import { ProductOptionsSection } from "./form-sections/ProductOptionsSection";
+import { MarketplaceSection } from "./form-sections/MarketplaceSection";
+import { CategoryModal } from "./form-sections/CategoryModal";
 
 interface ProductFormProps {
     formData: FormData;
@@ -100,274 +105,39 @@ export default function ProductForm({
             )}
 
             <form onSubmit={handleSubmit} className="space-y-8">
+                <BasicInfoSection
+                    formData={formData}
+                    setFormData={setFormData}
+                    categoriesList={categoriesList}
+                    productTypesList={productTypesList}
+                    isEditMode={isEditMode}
+                    handleSeedData={handleSeedData}
+                    seeding={seeding}
+                    setShowCategoryModal={setShowCategoryModal}
+                />
 
-                {/* Info Dasar */}
-                <section className="bg-white dark:bg-[#121212] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-8">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg text-indigo-600 dark:text-indigo-400">
-                            <FileText size={20} />
-                        </div>
-                        <div>
-                            <h2 className="font-bold text-xl text-gray-900 dark:text-white">Info Dasar Produk</h2>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">Nama, brand, kategori, dan harga produk</p>
-                        </div>
-                    </div>
+                <ProductDetailSection
+                    formData={formData}
+                    setFormData={setFormData}
+                    previewUrl={previewUrl}
+                    existingImage={existingImage}
+                    onImageSelect={onImageSelect}
+                    onRemoveImage={onRemoveImage}
+                >
+                    <ProductOptionsSection
+                        skinTypeOptions={skinTypeOptions}
+                        concernOptions={concernOptions}
+                        skinTypes={skinTypes}
+                        setSkinTypes={setSkinTypes}
+                        concerns={concerns}
+                        setConcerns={setConcerns}
+                    />
+                </ProductDetailSection>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300" htmlFor="name">Nama Produk <span className="text-red-500">*</span></label>
-                            <input
-                                id="name"
-                                type="text"
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-600"
-                                placeholder="Ex: Facial Wash"
-                                required
-                            />
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300" htmlFor="brand">Brand <span className="text-red-500">*</span></label>
-                            <input
-                                id="brand"
-                                type="text"
-                                value={formData.brand}
-                                onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                                className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-600"
-                                placeholder="Ex: Wardah"
-                                required
-                            />
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300" htmlFor="category">Kategori <span className="text-red-500">*</span></label>
-                            <div className="flex gap-2 items-center">
-                                <div className="relative w-full">
-                                    <select
-                                        id="category"
-                                        value={formData.category_id}
-                                        onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-                                        className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
-                                        required
-                                    >
-                                        <option value="">Pilih kategori produk</option>
-                                        {categoriesList.map((c) => (
-                                            <option key={c.id} value={c.id}>{c.name}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </div>
-                            <button
-                                type="button"
-                                onClick={() => setShowCategoryModal(true)}
-                                className="p-3 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
-                                title="Tambah Kategori Baru"
-                            >
-                                <Plus size={20} />
-                            </button>
-                        </div>
-                        {!isEditMode && categoriesList.length === 0 && handleSeedData && (
-                            <button type="button" onClick={handleSeedData} disabled={seeding} className="text-xs text-indigo-600 hover:text-indigo-500 font-medium mt-1">
-                                {seeding ? 'Mengisi data...' : 'Data kosong? Isi Default'}
-                            </button>
-                        )}
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300" htmlFor="product_type">Tipe Produk <span className="text-red-500">*</span></label>
-                            <div className="relative">
-                                <select
-                                    id="product_type"
-                                    value={formData.product_type_id}
-                                    onChange={(e) => setFormData({ ...formData, product_type_id: e.target.value })}
-                                    className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
-                                    required
-                                >
-                                    <option value="">Pilih tipe produk</option>
-                                    {productTypesList.map((t) => (
-                                        <option key={t.id} value={t.id}>{t.name}</option>
-                                    ))}
-                                </select>
-                                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
-                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300" htmlFor="price">Harga (Rp) <span className="text-red-500">*</span></label>
-                            <input
-                                id="price"
-                                type="number"
-                                value={formData.price}
-                                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                                min="0"
-                                step="1"
-                                className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-600"
-                                placeholder="Ex: 50000"
-                                required
-                            />
-                        </div>
-                    </div>
-
-                    <div className="mt-6 flex items-center">
-                        <label className="relative inline-flex items-center cursor-pointer group">
-                            <input
-                                type="checkbox"
-                                checked={formData.featured}
-                                onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-                                className="sr-only peer"
-                            />
-                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-900 rounded-full dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600"></div>
-                            <span className="ms-3 text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Jadikan produk unggulan (featured)</span>
-                        </label>
-                    </div>
-                </section>
-
-                {/* Detail Produk */}
-                <section className="bg-white dark:bg-[#121212] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-8">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg text-purple-600 dark:text-purple-400">
-                            <FlaskConical size={20} />
-                        </div>
-                        <div>
-                            <h2 className="font-bold text-xl text-gray-900 dark:text-white">Detail Produk</h2>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">Upload gambar dan deskripsi produk</p>
-                        </div>
-                    </div>
-
-                    <div className="space-y-6">
-                        <div className="space-y-2">
-                            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Gambar Produk</label>
-                            <ImageUploader
-                                previewUrl={previewUrl || existingImage}
-                                onImageSelect={onImageSelect}
-                                onRemove={onRemoveImage}
-                            />
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300" htmlFor="description">Deskripsi Produk <span className="text-red-500">*</span></label>
-                            <textarea
-                                id="description"
-                                value={formData.description}
-                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                rows={4}
-                                className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-600 resize-y min-h-[100px]"
-                                placeholder="Jelaskan detail produk secara lengkap..."
-                                required
-                            />
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Ingredients (pisahkan dengan koma)</label>
-                            <textarea
-                                value={formData.ingredients}
-                                onChange={(e) => setFormData({ ...formData, ingredients: e.target.value })}
-                                rows={3}
-                                className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-600 resize-none"
-                                placeholder="Ex: Aqua, Glycerin, Niacinamide..."
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Cara Penggunaan</label>
-                                <textarea
-                                    value={formData.usage}
-                                    onChange={(e) => setFormData({ ...formData, usage: e.target.value })}
-                                    rows={3}
-                                    className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-600 resize-none"
-                                    placeholder="Ex: Aplikasikan pada wajah..."
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Ukuran/Volume</label>
-                                <input
-                                    type="text"
-                                    value={formData.size}
-                                    onChange={(e) => setFormData({ ...formData, size: e.target.value })}
-                                    className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-600"
-                                    placeholder="Ex: 50ml"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="space-y-4 pt-4 border-t border-gray-100 dark:border-gray-800">
-                            <div>
-                                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Jenis Kulit Yang Cocok</h3>
-                                <div className="flex flex-wrap gap-2">
-                                    {skinTypeOptions.map((opt) => (
-                                        <label key={opt} className={`cursor-pointer px-4 py-2 rounded-full text-sm border transition-all ${skinTypes.includes(opt) ? 'bg-purple-600 border-purple-600 text-white shadow-md' : 'bg-transparent border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-purple-300'}`}>
-                                            <input
-                                                type="checkbox"
-                                                className="hidden"
-                                                checked={skinTypes.includes(opt)}
-                                                onChange={(e) => setSkinTypes((prev) => e.target.checked ? [...prev, opt] : prev.filter((x) => x !== opt))}
-                                            />
-                                            {opt}
-                                        </label>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div>
-                                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Masalah Kulit Yang Ditangani</h3>
-                                <div className="flex flex-wrap gap-2">
-                                    {concernOptions.map((opt) => (
-                                        <label key={opt} className={`cursor-pointer px-4 py-2 rounded-full text-sm border transition-all ${concerns.includes(opt) ? 'bg-purple-600 border-purple-600 text-white shadow-md' : 'bg-transparent border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-purple-300'}`}>
-                                            <input
-                                                type="checkbox"
-                                                className="hidden"
-                                                checked={concerns.includes(opt)}
-                                                onChange={(e) => setConcerns((prev) => e.target.checked ? [...prev, opt] : prev.filter((x) => x !== opt))}
-                                            />
-                                            {opt}
-                                        </label>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Marketplace Links */}
-                <section className="bg-white dark:bg-[#121212] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-8">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600 dark:text-blue-400">
-                            <LinkIcon size={20} />
-                        </div>
-                        <div>
-                            <h2 className="font-bold text-xl text-gray-900 dark:text-white">Tautan Marketplace</h2>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">Masukkan URL produk (opsional)</p>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300" htmlFor="tokopedia_url">Tokopedia URL</label>
-                            <input
-                                id="tokopedia_url"
-                                type="url"
-                                placeholder="https://www.tokopedia.com/..."
-                                value={formData.tokopedia_url}
-                                onChange={(e) => setFormData({ ...formData, tokopedia_url: e.target.value })}
-                                className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-600"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300" htmlFor="shopee_url">Shopee URL</label>
-                            <input
-                                id="shopee_url"
-                                type="url"
-                                placeholder="https://shopee.co.id/..."
-                                value={formData.shopee_url}
-                                onChange={(e) => setFormData({ ...formData, shopee_url: e.target.value })}
-                                className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-600"
-                            />
-                        </div>
-                    </div>
-                </section>
+                <MarketplaceSection
+                    formData={formData}
+                    setFormData={setFormData}
+                />
 
                 {/* Action Buttons */}
                 <div className="flex items-center justify-end gap-4 pt-4">
@@ -394,54 +164,15 @@ export default function ProductForm({
                     <span className="font-medium">{success}</span>
                 </div>
             )}
-            {/* Quick Add Category Modal */}
-            {showCategoryModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                    <div className="bg-white dark:bg-[#1e1e1e] rounded-2xl shadow-xl w-full max-w-sm p-6 animate-in fade-in zoom-in duration-200">
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-bold text-gray-900 dark:text-white">Tambah Kategori Baru</h3>
-                            <button
-                                onClick={() => setShowCategoryModal(false)}
-                                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                            >
-                                <X size={20} />
-                            </button>
-                        </div>
-                        <div className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Nama Kategori
-                                </label>
-                                <input
-                                    type="text"
-                                    value={newCategoryName}
-                                    onChange={(e) => setNewCategoryName(e.target.value)}
-                                    placeholder="Contoh: Serum"
-                                    className="w-full px-4 py-2 rounded-lg bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-indigo-500 outline-none"
-                                    autoFocus
-                                />
-                            </div>
-                            <div className="flex gap-3 pt-2">
-                                <button
-                                    type="button"
-                                    onClick={() => setShowCategoryModal(false)}
-                                    className="flex-1 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-colors"
-                                >
-                                    Batal
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={handleAddCategory}
-                                    disabled={isAddingCategory || !newCategoryName.trim()}
-                                    className="flex-1 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    {isAddingCategory ? 'Menyimpan...' : 'Simpan'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+
+            <CategoryModal
+                showCategoryModal={showCategoryModal}
+                setShowCategoryModal={setShowCategoryModal}
+                newCategoryName={newCategoryName}
+                setNewCategoryName={setNewCategoryName}
+                handleAddCategory={handleAddCategory}
+                isAddingCategory={isAddingCategory}
+            />
         </div>
     );
 }
