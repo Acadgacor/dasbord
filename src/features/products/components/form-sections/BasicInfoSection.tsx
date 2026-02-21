@@ -1,6 +1,7 @@
 import React from 'react';
 import { FileText, Plus } from 'lucide-react';
 import { FormData } from "@/features/products/hooks/useProductForm";
+import { SearchableSelect } from "@/shared/components/SearchableSelect";
 
 interface BasicInfoSectionProps {
     formData: FormData;
@@ -65,20 +66,14 @@ export function BasicInfoSection({
                 <div className="space-y-2">
                     <label className="text-sm font-semibold text-gray-700 dark:text-gray-300" htmlFor="category">Kategori <span className="text-red-500">*</span></label>
                     <div className="flex gap-2 items-center">
-                        <div className="relative w-full">
-                            <select
-                                id="category"
-                                value={formData.category_id}
-                                onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-                                className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
-                                required
-                            >
-                                <option value="">Pilih kategori produk</option>
-                                {categoriesList.map((c) => (
-                                    <option key={c.id} value={c.id}>{c.name}</option>
-                                ))}
-                            </select>
-                        </div>
+                        <SearchableSelect
+                            id="category"
+                            options={categoriesList}
+                            value={formData.category_id}
+                            onChange={(val) => setFormData({ ...formData, category_id: val })}
+                            placeholder="Pilih kategori produk"
+                            required
+                        />
                     </div>
                     <button
                         type="button"
@@ -98,21 +93,14 @@ export function BasicInfoSection({
                 <div className="space-y-2">
                     <label className="text-sm font-semibold text-gray-700 dark:text-gray-300" htmlFor="product_type">Tipe Produk <span className="text-red-500">*</span></label>
                     <div className="relative">
-                        <select
+                        <SearchableSelect
                             id="product_type"
+                            options={productTypesList}
                             value={formData.product_type_id}
-                            onChange={(e) => setFormData({ ...formData, product_type_id: e.target.value })}
-                            className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
+                            onChange={(val) => setFormData({ ...formData, product_type_id: val })}
+                            placeholder="Pilih tipe produk"
                             required
-                        >
-                            <option value="">Pilih tipe produk</option>
-                            {productTypesList.map((t) => (
-                                <option key={t.id} value={t.id}>{t.name}</option>
-                            ))}
-                        </select>
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
-                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                        </div>
+                        />
                     </div>
                 </div>
 
