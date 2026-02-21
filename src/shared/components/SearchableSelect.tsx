@@ -13,6 +13,7 @@ interface SearchableSelectProps {
     onChange: (value: string) => void;
     placeholder?: string;
     required?: boolean;
+    disabled?: boolean;
 }
 
 export function SearchableSelect({
@@ -21,7 +22,8 @@ export function SearchableSelect({
     value,
     onChange,
     placeholder = "Pilih...",
-    required
+    required,
+    disabled
 }: SearchableSelectProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
@@ -43,7 +45,7 @@ export function SearchableSelect({
     }, []);
 
     return (
-        <div className="relative w-full" ref={dropdownRef}>
+        <div className={`relative w-full ${isOpen ? 'z-50' : 'z-10'}`} ref={dropdownRef}>
             {required && (
                 <input
                     type="text"
@@ -58,8 +60,9 @@ export function SearchableSelect({
 
             <button
                 type="button"
-                onClick={() => setIsOpen(!isOpen)}
-                className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all flex justify-between items-center text-left"
+                onClick={() => !disabled && setIsOpen(!isOpen)}
+                disabled={disabled}
+                className={`w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all flex justify-between items-center text-left ${disabled ? 'bg-gray-100 dark:bg-gray-800 cursor-not-allowed opacity-60' : 'bg-gray-50 dark:bg-[#0a0a0a]'}`}
             >
                 <span className={selectedOption ? "" : "text-gray-400 dark:text-gray-600"}>
                     {selectedOption ? selectedOption.name : placeholder}
@@ -68,8 +71,8 @@ export function SearchableSelect({
             </button>
 
             {isOpen && (
-                <div className="absolute z-[100] w-full mt-2 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-                    <div className="p-2 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-[#1e1e1e]">
+                <div className="absolute z-[100] w-full mt-2 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 flex flex-col max-h-64">
+                    <div className="p-2 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-[#1e1e1e] shrink-0">
                         <div className="relative">
                             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                             <input
@@ -84,7 +87,7 @@ export function SearchableSelect({
                         </div>
                     </div>
 
-                    <div className="overflow-y-auto overscroll-contain p-1 bg-white dark:bg-[#1e1e1e] w-full" style={{ maxHeight: '250px' }}>
+                    <div className="flex-1 overflow-y-auto overscroll-contain custom-scrollbar p-1 bg-white dark:bg-[#1e1e1e] w-full">
                         {filteredOptions.length === 0 ? (
                             <div className="px-4 py-3 text-sm text-gray-500 text-center">
                                 Tidak ada hasil

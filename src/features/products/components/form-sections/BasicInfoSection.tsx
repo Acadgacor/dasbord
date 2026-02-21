@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { FileText, Plus } from 'lucide-react';
 import { FormData } from "@/features/products/hooks/useProductForm";
 import { SearchableSelect } from "@/shared/components/SearchableSelect";
@@ -7,7 +7,7 @@ interface BasicInfoSectionProps {
     formData: FormData;
     setFormData: React.Dispatch<React.SetStateAction<FormData>>;
     categoriesList: { id: string; name: string }[];
-    productTypesList: { id: string; name: string }[];
+    productTypesList: { id: string; name: string; category_id?: string | number }[];
     isEditMode: boolean;
     handleSeedData?: () => void;
     seeding?: boolean;
@@ -24,6 +24,13 @@ export function BasicInfoSection({
     seeding,
     setShowCategoryModal
 }: BasicInfoSectionProps) {
+    const availableProductTypes = useMemo(() => {
+        if (!formData.category_id) return [];
+        return productTypesList.filter(
+            (type: any) => String(type.category_id) === String(formData.category_id)
+        );
+    }, [formData.category_id, productTypesList]);
+
     return (
         <section className="bg-white dark:bg-[#121212] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-8">
             <div className="flex items-center gap-3 mb-6">
@@ -66,23 +73,25 @@ export function BasicInfoSection({
                 <div className="space-y-2">
                     <label className="text-sm font-semibold text-gray-700 dark:text-gray-300" htmlFor="category">Kategori <span className="text-red-500">*</span></label>
                     <div className="flex gap-2 items-center">
-                        <SearchableSelect
-                            id="category"
-                            options={categoriesList}
-                            value={formData.category_id}
-                            onChange={(val) => setFormData({ ...formData, category_id: val })}
-                            placeholder="Pilih kategori produk"
-                            required
-                        />
+                        <div className="flex-1">
+                            <SearchableSelect
+                                id="category"
+                                options={categoriesList}
+                                value={formData.category_id}
+                                onChange={(val) => setFormData({ ...formData, category_id: val, product_type_id: '' })}
+                                placeholder="Pilih kategori produk"
+                                required
+                            />
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => setShowCategoryModal(true)}
+                            className="p-3 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors shrink-0"
+                            title="Tambah Kategori Baru"
+                        >
+                            <Plus size={20} />
+                        </button>
                     </div>
-                    <button
-                        type="button"
-                        onClick={() => setShowCategoryModal(true)}
-                        className="p-3 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
-                        title="Tambah Kategori Baru"
-                    >
-                        <Plus size={20} />
-                    </button>
                 </div>
                 {!isEditMode && categoriesList.length === 0 && handleSeedData && (
                     <button type="button" onClick={handleSeedData} disabled={seeding} className="text-xs text-indigo-600 hover:text-indigo-500 font-medium mt-1">
@@ -95,10 +104,11 @@ export function BasicInfoSection({
                     <div className="relative">
                         <SearchableSelect
                             id="product_type"
-                            options={productTypesList}
+                            options={availableProductTypes}
                             value={formData.product_type_id}
                             onChange={(val) => setFormData({ ...formData, product_type_id: val })}
-                            placeholder="Pilih tipe produk"
+                            placeholder={formData.category_id ? "Pilih tipe produk" : "Pilih kategori dahulu"}
+                            disabled={!formData.category_id}
                             required
                         />
                     </div>
