@@ -2,7 +2,7 @@
 
 import { useTransition, useState } from 'react';
 import { Star } from 'lucide-react';
-import { toggleFeaturedStatus } from '@/actions/product-actions';
+import { toggleFeaturedStatus } from "@/features/products/actions";
 
 interface FeaturedToggleProps {
     productId: string;

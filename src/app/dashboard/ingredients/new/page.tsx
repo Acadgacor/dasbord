@@ -1,4 +1,4 @@
-import IngredientForm from "@/components/dashboard/IngredientForm";
+import IngredientForm from "@/features/ingredients/components/IngredientForm";
 
 export const metadata = {
     title: "Tambah Kandungan Baru | Dashboard",

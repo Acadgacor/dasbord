@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Navbar from '@/components/Navbar';
+import Navbar from "@/shared/components/Navbar";
 import { useRouter, usePathname } from 'next/navigation';
 import { LayoutDashboard, Package, Upload, Menu, X, LogOut, Beaker } from 'lucide-react';
 import { createClientClient } from '@/lib/supabaseClient';

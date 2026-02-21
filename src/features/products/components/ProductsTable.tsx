@@ -1,6 +1,6 @@
 import React from 'react';
 import { ExternalLink, Star, MoreHorizontal, Edit2, Trash2 } from 'lucide-react';
-import type { Product } from '@/types/product';
+import type { Product } from "@/features/products/types";
 import Link from 'next/link';
 import { createClientClient } from '@/lib/supabaseClient';
 

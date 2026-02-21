@@ -1,7 +1,7 @@
 import React from 'react';
 import { Package, FileText, FlaskConical, Link as LinkIcon, AlertCircle, Plus, X } from 'lucide-react';
-import ImageUploader from '@/components/upload/ImageUploader';
-import { FormData } from '@/hooks/useProductForm'; // Import interface
+import ImageUploader from "@/shared/components/upload/ImageUploader";
+import { FormData } from "@/features/products/hooks/useProductForm"; // Import interface
 
 interface ProductFormProps {
     formData: FormData;

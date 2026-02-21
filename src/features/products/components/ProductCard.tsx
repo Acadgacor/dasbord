@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { createClientClient } from '@/lib/supabaseClient';
-import type { Product } from '@/types/product';
+import type { Product } from "@/features/products/types";
 import { Edit2, Trash2, Star, AlertCircle } from 'lucide-react';
 
 interface ProductCardProps {

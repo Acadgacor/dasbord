@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { Ingredient } from "@/types/ingredient";
-import IngredientForm from "@/components/dashboard/IngredientForm";
+import { Ingredient } from "@/features/ingredients/types";
+import IngredientForm from "@/features/ingredients/components/IngredientForm";
 import { createClientClient } from "@/lib/supabaseClient";
 
 export default function EditIngredientPage() {
